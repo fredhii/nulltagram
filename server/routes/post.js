@@ -26,14 +26,15 @@ router.get('/allposts', (req, res) => {
  * Return: error or json with post data
  */
 router.post('/createpost', requiredLogin, (req, res) => {
-    const { title, body } = req.body
-    if ( !title || !body )
+    const { title, body, url } = req.body
+    if ( !title || !body || !url)
         return res.status(422).json({ error: 'Please insert all the fields' })
 
     req.user.password = null
     const post = new Post({
         title,
         body,
+        url,
         postedBy: req. user
     })
     post.save()
