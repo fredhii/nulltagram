@@ -64,6 +64,11 @@ router.get('/mypost', requireLogin, (req, res) => {
     })
 })
 
+/**
+ * Name: givelike
+ * Description: Adds a like in a post image
+ * Return: error or successful message
+ */
 router.put('/givelike', requireLogin, (req, res) => {
     Post.findByIdAndUpdate(req.body.postId, {
         $push:{ likes: req.user._id }
@@ -78,6 +83,11 @@ router.put('/givelike', requireLogin, (req, res) => {
     })
 })
 
+/**
+ * Name: removelike
+ * Description: Removes a like in a post image
+ * Return: error or successful message
+ */
 router.put('/removelike', requireLogin, (req, res) => {
     Post.findByIdAndUpdate(req.body.postId, {
         $pull:{ likes: req.user._id }

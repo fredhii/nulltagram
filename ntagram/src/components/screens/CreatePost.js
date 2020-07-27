@@ -2,12 +2,20 @@ import React, { useEffect } from 'react'
 import M from 'materialize-css'
 import { useHistory } from 'react-router-dom'
 
+/**
+ * Name: CreatePost
+ * Description: Publish an image
+ */
 const CreatePost = () => {
     const history = useHistory()
     const [ title, setTitle ] = React.useState('')
     const [ body, setBody ] = React.useState('')
     const [ image, setImage ] = React.useState('')
     const [ url, setUrl ] = React.useState('')
+
+    /* =================================================================== */
+    /* Saves image data into database */
+    /* =================================================================== */
     useEffect(() => {
         if (url) {
             fetch('/createpost', {
@@ -37,6 +45,9 @@ const CreatePost = () => {
         }
     }, [ body, url, title, history ])
 
+    /* =================================================================== */
+    /* Uploads image to Cloudinary */
+    /* =================================================================== */
     const postDetails = () => {
         const data = new FormData()
         data.append('file', image)
@@ -55,6 +66,9 @@ const CreatePost = () => {
         })        
     }
 
+    /* =================================================================== */
+    /* HTML */
+    /* =================================================================== */
     return (
         <div className='card input-filed' style={{ margin: '10px auto', maxWidth: '500px', padding: '20px', textAlign: 'center' }} >
             <input type='text' placeholder='title' value={ title } onChange={ (e) => setTitle( e.target.value ) } />

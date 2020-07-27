@@ -2,9 +2,17 @@ import React, { useContext } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { UserContext } from '../App'
 
+/**
+ * Name: NavBar
+ * Description: User navigation bar
+ */
 const NavBar = () => {
     const history = useHistory()
     const { state, dispatch } = useContext(UserContext)
+
+    /* =================================================================== */
+    /* Displays login or home view */
+    /* =================================================================== */
     const renderList = () => {
         if (state) {
             return [
@@ -29,6 +37,9 @@ const NavBar = () => {
         }
     }
 
+    /* =================================================================== */
+    /* HTML */
+    /* =================================================================== */
     return (
         <nav>
             <div className="nav-wrapper white">

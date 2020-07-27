@@ -2,11 +2,19 @@ import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import M from 'materialize-css'
 
+/**
+ * Name: Signup
+ * Description: Creates an account
+ */
 const Signup = () => {
     const history = useHistory()
     const [ name, setName ] = React.useState('')
     const [ email, setEmail ] = React.useState('')
     const [ password, setPassword ] = React.useState('')
+
+    /* =================================================================== */
+    /* Creates an account */
+    /* =================================================================== */
     const PostData = () => {
         // eslint-disable-next-line
         if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email))
@@ -36,6 +44,9 @@ const Signup = () => {
         })
     }
 
+    /* =================================================================== */
+    /* HTML */
+    /* =================================================================== */
     return (
         <div className='mycard'>
             <div className="card auth-card input-field">

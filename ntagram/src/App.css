@@ -9,7 +9,7 @@ a {
   color: black !important;
 }
 
-/* COMMON */
+/* Make components clickeables */
 .clickeable {
   cursor: pointer;
 }

@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 
+/* ======================================================= */
+/* Middleware to require login */
+/* ======================================================= */
 module.exports = ( req, res, next ) => {
     const { authorization } = req.headers
     if ( !authorization )

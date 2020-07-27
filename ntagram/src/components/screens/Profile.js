@@ -1,10 +1,17 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { UserContext } from '../../App'
 
+/**
+ * Name: Profile
+ * Description: Displays user profile
+ */
 const Profile = () => {
     const [ userPics , setUserPics ] = useState([])
     const { state } = useContext(UserContext)
 
+    /* =================================================================== */
+    /* Gets user images */
+    /* =================================================================== */
     useEffect(() => {
         fetch('/mypost', {
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
@@ -12,6 +19,9 @@ const Profile = () => {
         .then(result => { setUserPics(result.mypost) })
     }, [])
 
+    /* =================================================================== */
+    /* HTML */
+    /* =================================================================== */
     return (
         <div style={{ maxWidth: '700px', margin: '0px auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-around', margin: '40px 0px', borderBottom: '1px solid grey' }}>
@@ -34,7 +44,7 @@ const Profile = () => {
                 </div>
             </div>
 
-            {/* User Photos */}
+            {/* User published photos */}
             <div className='gallery'>
                 {
                     userPics.map( item => {
