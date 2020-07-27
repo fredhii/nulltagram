@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import M from 'materialize-css'
 import { useHistory } from 'react-router-dom'
 
@@ -8,8 +8,36 @@ const CreatePost = () => {
     const [ body, setBody ] = React.useState('')
     const [ image, setImage ] = React.useState('')
     const [ url, setUrl ] = React.useState('')
-    
-    const postDetauls = () => {
+    useEffect(() => {
+        if (url) {
+            fetch('/createpost', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+                },
+                body: JSON.stringify({
+                    title,
+                    body,
+                    url
+                })
+            })
+            .then( res => res.json() )
+            .then( data => {
+                if (data.error)
+                    M.toast({ html: data.error, classes:'#c62828 red darken-3' })
+                else {
+                    M.toast({ html: 'Image posted successfully', classes:'#2e7d32 green darken-3' })
+                    history.push('/')
+                }
+            })
+            .catch( err => {
+                console.log(err)
+            })
+        }
+    }, [ body, url, title, history ])
+
+    const postDetails = () => {
         const data = new FormData()
         data.append('file', image)
         data.append('upload_preset', 'nulltagram')
@@ -24,32 +52,7 @@ const CreatePost = () => {
         })
         .catch( err => {
             console.log(err)
-        })
-
-        fetch('/createpost', {
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title,
-                body,
-                url
-            })
-        })
-        .then( res => res.json() )
-        .then( data => {
-            console.log(data)
-            if (data.error)
-                M.toast({ html: data.error, classes:'#c62828 red darken-3' })
-            else {
-                M.toast({ html: 'Image posted successfully', classes:'#2e7d32 green darken-3' })
-                history.push('/')
-            }
-        })
-        .catch( err => {
-            console.log(err)
-        })
+        })        
     }
 
     return (
@@ -66,7 +69,7 @@ const CreatePost = () => {
                     <input className='file-path validate' type='text' />
                 </div>
             </div>
-            <button className='btn waves-effect waves-light #64b5f6 blue darken-1' onClick={ () => postDetauls() } >
+            <button className='btn waves-effect waves-light #64b5f6 blue darken-1' onClick={ () => postDetails() } >
                 Submit
             </button>
         </div>

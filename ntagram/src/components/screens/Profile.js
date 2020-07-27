@@ -1,6 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState, useContext } from 'react'
+import { UserContext } from '../../App'
 
 const Profile = () => {
+    const [ userPics , setUserPics ] = useState([])
+    const { state } = useContext(UserContext)
+
+    useEffect(() => {
+        fetch('/mypost', {
+            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
+        }).then( res => res.json() )
+        .then(result => { setUserPics(result.mypost) })
+    }, [])
+
     return (
         <div style={{ maxWidth: '700px', margin: '0px auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-around', margin: '40px 0px', borderBottom: '1px solid grey' }}>
@@ -11,9 +22,10 @@ const Profile = () => {
                         alt=''
                     />
                 </div>
+
                 {/* Profile name */}
                 <div>
-                    <h4>Profile name</h4>
+                    <h4>{ state ? state.name : 'loading...' }</h4>
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '108%' }}>
                         <h6>40 posts</h6>
                         <h6>40 followers</h6>
@@ -21,13 +33,16 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
+
+            {/* User Photos */}
             <div className='gallery'>
-                <img className='item' alt='' src='https://images.unsplash.com/photo-1503442862980-50ccb3f1d085?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                <img className='item' alt='' src='https://images.unsplash.com/photo-1503442862980-50ccb3f1d085?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                <img className='item' alt='' src='https://images.unsplash.com/photo-1503442862980-50ccb3f1d085?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                <img className='item' alt='' src='https://images.unsplash.com/photo-1503442862980-50ccb3f1d085?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                <img className='item' alt='' src='https://images.unsplash.com/photo-1503442862980-50ccb3f1d085?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                <img className='item' alt='' src='https://images.unsplash.com/photo-1503442862980-50ccb3f1d085?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
+                {
+                    userPics.map( item => {
+                        return (
+                            <img className='item' alt={ item.title } src={ item.picture } key={ item._id } />
+                        )
+                    })
+                }
             </div>
         </div>
     )

@@ -1,46 +1,112 @@
-import React from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { UserContext } from '../../App'
+
 
 const Home = () => {
+    const [ data, setData ] = useState([])
+    const { state } = useContext(UserContext) /* Get ID from logged user */
+
+    /* =================================================================== */
+    /* Get all posts */
+    /* =================================================================== */
+    useEffect(() => {
+        fetch('/allposts', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            }
+        }).then( res => res.json())
+        .then( result => {
+            setData(result.posts)
+        })
+    }, [])
+
+    /* =================================================================== */
+    /* Like a photo */
+    /* =================================================================== */
+    const PostLike = (id) => {
+        fetch('/givelike', {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
+            body: JSON.stringify({
+                postId: id
+            })
+        }).then( res => res.json() )
+        .then( result => {
+            const newData = data.map( item => {
+                if (item._id === result._id) {
+                    return result
+                } else {
+                    return item
+                }
+            })
+            setData(newData)
+        })
+    }
+
+    /* =================================================================== */
+    /* Remove like from photo */
+    /* =================================================================== */
+    const removePostLike = (id) => {
+        fetch('/removelike', {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
+            body: JSON.stringify({
+                postId: id
+            })
+        }).then( res => res.json() )
+        .then( result => {
+            const newData = data.map( item => {
+                if (item._id === result._id) {
+                    return result
+                } else {
+                    return item
+                }
+            })
+            setData(newData)
+        })
+    }
+
+    /* =================================================================== */
+    /* Show like or remove like button */
+    /* =================================================================== */
+    const renderLike = (item) =>  {
+        if ( item.likes.includes(state._id) ) {
+            return <i className='material-icons clickeable' style={{ color: '#00e676' }} onClick={() => { removePostLike(item._id) }}>favorite</i>
+        } else {
+            return <i className='material-icons clickeable' onClick={() => { PostLike(item._id) }}>favorite_border</i>
+        }
+    }
+
+    /* =================================================================== */
+    /* HTML */
+    /* =================================================================== */
     return (
         <div className='home'>
-            <div className='card home-card'>
-                <h5>user name</h5>
-                <div className='card-image'>
-                    <img alt='' src='https://images.unsplash.com/photo-1531342627655-673320198dc4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                </div>
-                <div className='card-content'>
-                    <i className='material-icons' >favorite_border</i>
-                    <h6>title</h6>
-                    <p>post description</p>
-                    <input type='text' placeholder='add comment here' />
-                </div>
-            </div>
-            {/* 2 */}
-            <div className='card home-card'>
-                <h5>user name</h5>
-                <div className='card-image'>
-                    <img alt='' src='https://images.unsplash.com/photo-1531342627655-673320198dc4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                </div>
-                <div className='card-content'>
-                    <i className='material-icons' >favorite_border</i>
-                    <h6>title</h6>
-                    <p>post description</p>
-                    <input type='text' placeholder='add comment here' />
-                </div>
-            </div>
-            {/* 3 */}
-            <div className='card home-card'>
-                <h5>user name</h5>
-                <div className='card-image'>
-                    <img alt='' src='https://images.unsplash.com/photo-1531342627655-673320198dc4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60' />
-                </div>
-                <div className='card-content'>
-                    <i className='material-icons' >favorite_border</i>
-                    <h6>title</h6>
-                    <p>post description</p>
-                    <input type='text' placeholder='add comment here' />
-                </div>
-            </div>
+            {
+                data.map( item => {
+                    return (
+                        <div className='card home-card' key={ item._id }>
+                            <h5>{ item.postedBy.name }</h5>
+                            <div className='card-image'>
+                                <img alt='' src={ item.picture } />
+                            </div>
+                            <div className='card-content'>
+                                { renderLike(item) }
+                                <h6>{ item.likes.length } likes</h6>
+                                <h6>{ item.title }</h6>
+                                <p>{ item.body }</p>
+                                <input type='text' placeholder='add comment here' />
+                            </div>
+                        </div>
+                    )
+                })
+            }
         </div>
     )
 }

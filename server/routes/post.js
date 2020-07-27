@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
-const requiredLogin = require('../middleware/requireLogin')
+const requireLogin = require('../middleware/requireLogin')
 const Post = mongoose.model('Post')
 
 /**
@@ -9,7 +9,7 @@ const Post = mongoose.model('Post')
  * Description: Get all post
  * Return: error or successful message
  */
-router.get('/allposts', (req, res) => {
+router.get('/allposts', requireLogin, (req, res) => {
     Post.find()
     .populate('postedBy', '_id name')
     .then( posts => {
@@ -25,7 +25,7 @@ router.get('/allposts', (req, res) => {
  * Description: Validates if user is logged in
  * Return: error or json with post data
  */
-router.post('/createpost', requiredLogin, (req, res) => {
+router.post('/createpost', requireLogin, (req, res) => {
     const { title, body, url } = req.body
     if ( !title || !body || !url)
         return res.status(422).json({ error: 'Please insert all the fields' })
@@ -34,7 +34,7 @@ router.post('/createpost', requiredLogin, (req, res) => {
     const post = new Post({
         title,
         body,
-        url,
+        picture: url,
         postedBy: req. user
     })
     post.save()
@@ -53,7 +53,7 @@ router.post('/createpost', requiredLogin, (req, res) => {
  * @req: user id
  * Return: error or successful message
  */
-router.get('/mypost', requiredLogin, (req, res) => {
+router.get('/mypost', requireLogin, (req, res) => {
     Post.find({ postedBy: req.user._id })
     .populate( 'postedBy', '_id name' )
     .then( mypost => {
@@ -61,6 +61,34 @@ router.get('/mypost', requiredLogin, (req, res) => {
     })
     .catch( err => {
         console.log(err)
+    })
+})
+
+router.put('/givelike', requireLogin, (req, res) => {
+    Post.findByIdAndUpdate(req.body.postId, {
+        $push:{ likes: req.user._id }
+    }, {
+        new: true
+    }).exec(( err, result ) => {
+        if (err) {
+            return res.status(422).json({  error: err })
+        } else {
+            res.json(result)
+        }
+    })
+})
+
+router.put('/removelike', requireLogin, (req, res) => {
+    Post.findByIdAndUpdate(req.body.postId, {
+        $pull:{ likes: req.user._id }
+    }, {
+        new: true
+    }).exec(( err, result ) => {
+        if (err) {
+            return res.status(422).json({  error: err })
+        } else {
+            res.json(result)
+        }
     })
 })
 
