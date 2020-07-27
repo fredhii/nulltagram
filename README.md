@@ -22,9 +22,17 @@
 Social network to share your experiences through pictures and look at others experiences
 
 ### Usage
+1) Run backend
 ```sh
+cd server/
 npm i
 npm run dev
+```
+2) In a new terminarl run front-end
+```sh
+cd ntagram/
+npm i
+npm start
 ```
 
 ## Contributing
