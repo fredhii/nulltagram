@@ -2,6 +2,8 @@ import React, { useContext } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { UserContext } from '../../App'
 import M from 'materialize-css'
+import "./styles/Signin.css"
+import "./styles/commons.css"
 
 /**
  * Name: Signin
@@ -51,16 +53,32 @@ const Signin = () => {
     /* HTML */
     /* =================================================================== */
     return (
-        <div className='mycard'>
-            <div className="card auth-card input-field">
-                <h2>Nulltagram</h2>
-                <input type='text' placeholder='email' value={ email } onChange={ (e) => setEmail(e.target.value) } />
-                <input type='password' placeholder='password' value={ password } onChange={ (e) => setPassword(e.target.value) } />
-                <button className="btn waves-effect waves-light #64b5f6 blue darken-1" onClick= { () => PostData() } >
-                    Signin
-                </button>
-                <br />
-                <p> Don't have an account? <Link to='./signup'> Sign up </Link></p>
+        <div className="container container__signin">
+            <div className="container__img">
+                <img width="250" alt="hero" src="https://raw.githubusercontent.com/davidgonzalezfx/Platzigram/master/assets/iphone.png" />
+            </div>
+            
+            
+            <div className='mycard'>
+                <div className="card auth-card input-field">
+                    <h2>Nulltagram</h2>
+                    <input type='text' placeholder='email' value={ email } onChange={ (e) => setEmail(e.target.value) } />
+                    <input type='password' placeholder='password' value={ password } onChange={ (e) => setPassword(e.target.value) } />
+                    <button className="btn waves-effect waves-light #64b5f6 blue darken-1" onClick= { () => PostData() } >
+                        Signin
+                    </button>
+                    <br />
+                </div>
+                <div className="card auth-card input-field">
+                    <p> Don't have an account? <Link to='./signup'> <span>Sign up </span> </Link></p>
+                </div>
+                <div className="container__appfield">
+                    <p> Get the app</p>
+                    <div>
+                        <img width="150" alt="" src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_english-en.png/180ae7a0bcf7.png" />
+                        <img width="150" alt="" src="https://www.instagram.com/static/images/appstore-install-badges/badge_android_english-en.png/e9cd846dc748.png" />
+                    </div>
+                </div>
             </div>
         </div>
     )

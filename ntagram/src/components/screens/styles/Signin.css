@@ -1,0 +1,16 @@
+div.container__signin {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+div.container__img {
+  margin-right: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  div.container__img {
+    display: none;
+  }
+}
