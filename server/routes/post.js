@@ -12,6 +12,7 @@ const Post = mongoose.model('Post')
 router.get('/allposts', requireLogin, (req, res) => {
     Post.find()
     .populate('postedBy', '_id name')
+    .populate('comments.postedBy', '_id name')
     .then( posts => {
         res.json({ posts })
     })
@@ -49,7 +50,7 @@ router.post('/createpost', requireLogin, (req, res) => {
 
 /**
  * Name: mypost
- * Description: Get a post
+ * Description: Get all user posts
  * @req: user id
  * Return: error or successful message
  */
@@ -98,6 +99,55 @@ router.put('/removelike', requireLogin, (req, res) => {
             return res.status(422).json({  error: err })
         } else {
             res.json(result)
+        }
+    })
+})
+
+/**
+ * Name: insert-comment
+ * Description: Inserts a comment in a post
+ * Return: error or successful message
+ */
+router.put('/insert-comment', requireLogin, (req, res) => {
+    const comment = {
+        text: req.body.text,
+        postedBy: req.user._id
+    }
+    Post.findByIdAndUpdate(req.body.postId, {
+        $push:{ comments: comment }
+    }, {
+        new: true
+    })
+    .populate('comments.postedBy', '_id name')
+    .populate('postedBy', '_id name')
+    .exec(( err, result ) => {
+        if (err) {
+            return res.status(422).json({  error: err })
+        } else {
+            res.json(result)
+        }
+    })
+})
+
+/**
+ * Name: delete-post
+ * Description: Deletes a post
+ * Return: error or successful message
+ */
+router.delete('/delete-post/:postId', requireLogin, (req, res) => {
+    Post.findOne({ _id: req.params.postId })
+    .populate('postedBy', '_id')
+    .exec(( err, post ) => {
+        if ( err || !post ) {
+            return res.status(422).json({ error: err })
+        }
+        if ( post.postedBy._id.toString() === req.user._id.toString() ) {
+            post.remove()
+            .then( result => {
+                res.json( result )
+            }). catch( err => {
+                console.log(err)
+            })
         }
     })
 })
