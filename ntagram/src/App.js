@@ -2,13 +2,15 @@ import React, { useContext } from 'react'
 import NavBar from './components/Navbar'
 import './App.css'
 import { BrowserRouter, Route, Switch, useHistory } from 'react-router-dom'
+import { useEffect, createContext, useReducer } from 'react'
+import { reducer, initialState } from './reducers/userReducer'
+/* Import routes */
 import Home from './components/screens/Home'
 import Signin from './components/screens/Signin'
 import Signup from './components/screens/Signup'
 import Profile from './components/screens/Profile'
 import CreatePost from './components/screens/CreatePost'
-import { useEffect, createContext, useReducer } from 'react'
-import { reducer, initialState } from './reducers/userReducer'
+import UserProfile from './components/screens/UserProfile'
 
 export const UserContext = createContext()
 
@@ -37,11 +39,14 @@ const Routing = () => {
       <Route path='/signup'>
         <Signup />
       </Route>
-      <Route path='/profile'>
+      <Route exact path='/profile'>
         <Profile />
       </Route>
       <Route path='/create'>
         <CreatePost />
+      </Route>
+      <Route path='/profile/:userid'>
+        <UserProfile />
       </Route>
     </Switch>
   )
