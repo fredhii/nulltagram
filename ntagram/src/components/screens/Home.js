@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { UserContext } from '../../App'
+import Loading from '../common/loading'
+import { Link } from 'react-router-dom'
 import M from 'materialize-css'
 
 
@@ -137,53 +139,57 @@ const Home = () => {
     /* HTML */
     /* =================================================================== */
     return (
-        <div className='home'>
-            {
-                data.map( item => {
-                    return (
-                        <div className='card home-card' key={ item._id }>
-                            <h5>
-                                {/* TODO: Add user profile picture */}
-                                { item.postedBy.name }
-                                {/* TODO: Change this to thee buttons and display modal */}
-                                {
-                                    item.postedBy._id === state._id &&
-                                    <i className='material-icons clickeable' style={{ float: 'right' }} onClick={ () => deletePost( item._id )} > delete </i>
-                                }
-                            </h5>
-                            <div className='card-image'>
-                                <img alt='' src={ item.picture } />
-                            </div>
-                            <div className='card-content'>
-                                { renderLike(item) }
-                                <h6>{ item.likes.length } likes</h6>
-                                <h6>{ item.title }</h6>
+        <>{
+            !data ?
+            <Loading /> :
+            <div className='home'>
+                {
+                    data.map( item => {
+                        return (
+                            <div className='card home-card' key={ item._id }>
+                                <h5>
+                                    {/* TODO: Add user profile picture */}
+                                    <Link to={ `/profile/${item.postedBy._id}` } className='clickeable' >{ item.postedBy.name }</Link>
+                                    {/* TODO: Change this to thee buttons and display modal */}
+                                    {
+                                        item.postedBy._id === state._id &&
+                                        <i className='material-icons clickeable' style={{ float: 'right' }} onClick={ () => deletePost( item._id )} > delete </i>
+                                    }
+                                </h5>
+                                <div className='card-image'>
+                                    <img alt='' src={ item.picture } />
+                                </div>
+                                <div className='card-content'>
+                                    { renderLike(item) }
+                                    <h6>{ item.likes.length } likes</h6>
+                                    <h6>{ item.title }</h6>
 
-                                {/* TODO: Display only one comment and add show more comments button */}
-                                <p>{ item.body }</p>
-                                {
-                                    item.comments.map( record => {
-                                        return (
-                                            <h6 key={ record._id }>
-                                                <span style={{ fontWeight: '500' }}>{ record.postedBy.name } </span>
-                                                <span>{ record.text }</span>
-                                            </h6>
-                                        )
-                                    })
-                                }
-                                <form onSubmit={ (e) => {
-                                    e.preventDefault()
-                                    /* TODO: Delete a comment */
-                                    insertComment(e.target[0].value, item._id)
-                                }} >
-                                    <input type='text' placeholder='add comment here' />
-                                </form>
+                                    {/* TODO: Display only one comment and add show more comments button */}
+                                    <p>{ item.body }</p>
+                                    {
+                                        item.comments.map( record => {
+                                            return (
+                                                <h6 key={ record._id }>
+                                                    <span style={{ fontWeight: '500' }}>{ record.postedBy.name } </span>
+                                                    <span>{ record.text }</span>
+                                                </h6>
+                                            )
+                                        })
+                                    }
+                                    <form onSubmit={ (e) => {
+                                        e.preventDefault()
+                                        /* TODO: Delete a comment */
+                                        insertComment(e.target[0].value, item._id)
+                                    }} >
+                                        <input type='text' placeholder='add comment here' />
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    )
-                })
-            }
-        </div>
+                        )
+                    })
+                }
+            </div>
+        }</>
     )
 }
 

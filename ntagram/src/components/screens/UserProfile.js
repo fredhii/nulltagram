@@ -43,9 +43,9 @@ const UserProfile = () => {
 
                         {/* Profile name */}
                         <div>
-                            <h4>{ userProfile ? userProfile.user.name : 'loading...' }</h4>
+                            <h4>{ userProfile.user.name }</h4>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '108%' }}>
-                                <h6>{ JSON.stringify(userProfile) } posts</h6>
+                                <h6>{ userProfile.posts.length } posts</h6>
                                 <h6>40 followers</h6>
                                 <h6>40 following</h6>
                             </div>
@@ -53,15 +53,15 @@ const UserProfile = () => {
                     </div>
                     
                     {/* User published photos */}
-                    {/* <div className='gallery'>
+                    <div className='gallery'>
                         {
-                            userPics.map( item => {
+                            userProfile.posts.map( item => {
                                 return (
                                     <img className='item' alt={ item.title } src={ item.picture } key={ item._id } />
                                 )
                             })
                         }
-                    </div> */}
+                    </div>
                 </div>
             }
         </>
