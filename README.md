@@ -35,6 +35,9 @@ npm i
 npm start
 ```
 
+# Proyect Colors
+https://colorhunt.co/palette/189745
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

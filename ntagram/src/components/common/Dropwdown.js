@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
+import { UserContext } from '../../App'
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
 
 const Dropdown = (props) => {
+	const { state } = useContext(UserContext) /* Get ID from logged user */
+
 	useEffect(() => {
 		let dropdowns = document.querySelectorAll('.dropdown-trigger')
 		let options = {
@@ -26,13 +29,13 @@ const Dropdown = (props) => {
 						<img
 							className='profile-img'
 							alt='profile pic'
-							src='https://images.unsplash.com/photo-1555952517-2e8e729e0b44?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60'
+							src={ state.image }
 						/>
-						<i class='material-icons right'>arrow_drop_down</i>
+						<i className='material-icons right'>arrow_drop_down</i>
 					</a>
 					<ul id='dropdown1' className='dropdown-content'>
 						<li>
-							<Link style={{ color: 'black' }} to='/profile'>
+							<Link style={{ color: 'black' }} to={ `/profile/${state._id}` }>
 								Profile
 							</Link>
 						</li>

@@ -11,7 +11,7 @@ const Post = mongoose.model('Post')
  */
 router.get('/allposts', requireLogin, (req, res) => {
     Post.find()
-    .populate('postedBy', '_id name')
+    .populate('postedBy', '_id name image')
     .populate('comments.postedBy', '_id name')
     .then( posts => {
         res.json({ posts })
@@ -56,7 +56,7 @@ router.post('/createpost', requireLogin, (req, res) => {
  */
 router.get('/mypost', requireLogin, (req, res) => {
     Post.find({ postedBy: req.user._id })
-    .populate( 'postedBy', '_id name' )
+    .populate( 'postedBy', '_id name image' )
     .then( mypost => {
         res.json({ mypost })
     })
@@ -77,7 +77,7 @@ router.put('/givelike', requireLogin, (req, res) => {
         new: true
     })
     .populate('comments.postedBy', '_id name')
-    .populate('postedBy', '_id name')
+    .populate('postedBy', '_id name image')
     .exec(( err, result ) => {
         if (err) {
             return res.status(422).json({  error: err })
@@ -99,7 +99,7 @@ router.put('/removelike', requireLogin, (req, res) => {
         new: true
     })
     .populate('comments.postedBy', '_id name')
-    .populate('postedBy', '_id name')
+    .populate('postedBy', '_id name image')
     .exec(( err, result ) => {
         if (err) {
             return res.status(422).json({  error: err })
@@ -125,7 +125,7 @@ router.put('/insert-comment', requireLogin, (req, res) => {
         new: true
     })
     .populate('comments.postedBy', '_id name')
-    .populate('postedBy', '_id name')
+    .populate('postedBy', '_id name image')
     .exec(( err, result ) => {
         if (err) {
             return res.status(422).json({  error: err })
