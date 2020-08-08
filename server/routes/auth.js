@@ -21,7 +21,7 @@ router.get('/protected', requiredLogin, (req, res) => {
  * Return: error or successful message
  */
 router.post('/signup', (req, res) => {
-    const { name, email, password } = req.body
+    const { name, email, password, image } = req.body
     if ( !email || !password || !name )
        return res.status(422).json({error: 'please add all the fields'})
 
@@ -35,7 +35,8 @@ router.post('/signup', (req, res) => {
             const user = new User({
                 email,
                 password: hashedpassword,
-                name
+                name,
+                image
             })
             user.save()
             .then( () => {
@@ -71,8 +72,8 @@ router.post('/signin', (req, res) => {
             if (!doMatch)
                 return res.status(422).json({ error: 'invalid password' })
             const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET )
-            const { _id, name, email } = savedUser
-            res.json({ token, user: { _id, name, email } })
+            const { _id, name, email, image, followers, following } = savedUser
+            res.json({ token, user: { _id, name, email, image, followers, following } })
         })
         .catch( err => {
             console.log(err)

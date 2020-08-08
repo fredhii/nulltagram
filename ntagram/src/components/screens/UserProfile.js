@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
+import { UserContext } from '../../App'
 import { useParams } from 'react-router-dom'
-import Loading from '../common/loading'
+import Loading from '../common/Loading'
 
 
 /**
@@ -9,6 +10,7 @@ import Loading from '../common/loading'
  */
 const UserProfile = () => {
     const [ userProfile , setUserProfile ] = useState(null)
+    const { state, dispatch } = useContext(UserContext)
     const { userid } = useParams()
 
     /* =================================================================== */
@@ -23,6 +25,76 @@ const UserProfile = () => {
         })
     }, [ userid ])
 
+    /* =================================================================== */
+    /* Follow user */
+    /* =================================================================== */
+    const followUser = () => {
+        fetch('/follow', {
+            method: 'put',
+            headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+            },
+            body: JSON.stringify({
+                followerId: userid
+            })
+        }).then( res => res.json() )
+        .then( data => {
+            dispatch({ type: 'UPDATE', payload: { following: data.following, followers: data.followers } })
+            localStorage.setItem('user', JSON.stringify(data))
+            setUserProfile((oldState) => {
+                return {
+                    ...oldState,
+                    user: {
+                        ...oldState.user,
+                        followers: [ ...oldState.user.followers, data._id ]
+                    }
+                }
+            })
+        })
+    }
+
+    /* =================================================================== */
+    /* Unfollow user */
+    /* =================================================================== */
+    const unfollowUser = () => {
+        fetch('/unfollow', {
+            method: 'put',
+            headers: {
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+            },
+            body: JSON.stringify({
+                followerId: userid
+            })
+        }).then( res => res.json() )
+        .then( data => {
+            dispatch({ type: 'UPDATE', payload: { following: data.following, followers: data.followers } })
+            localStorage.setItem('user', JSON.stringify(data))
+            setUserProfile((oldState) => {
+                const remainingFollowers = oldState.user.followers.filter(item => item !== data._id )
+                return {
+                    ...oldState,
+                    user: {
+                        ...oldState.user,
+                        followers: remainingFollowers
+                    }
+                }
+            })
+        })
+    }
+
+    /* =================================================================== */
+    /* Follow, Unfollow Button */
+    /* =================================================================== */
+    const followRender = ( userProfile ) => {
+        if (userid === state._id) { return }
+        if (!userProfile.user.followers.includes(state._id)) {
+            return <button className="btn waves-effect waves-light #64b5f6 blue darken-1" onClick= { () => followUser() } > Follow </button>
+        }
+        return <button className="btn waves-effect waves-light #f44336 red" onClick= { () => unfollowUser() } > Unfollow </button>
+    }
+
 
     /* =================================================================== */
     /* HTML */
@@ -36,7 +108,7 @@ const UserProfile = () => {
                         {/* Profile photo */}
                         <div>
                             <img style={{ width:'160px', height:'160px', borderRadius:'80px' }} 
-                                src='https://images.unsplash.com/photo-1555952517-2e8e729e0b44?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60'
+                                src={ userProfile.user.image }
                                 alt=''
                             />
                         </div>
@@ -46,9 +118,11 @@ const UserProfile = () => {
                             <h4>{ userProfile.user.name }</h4>
                             <div style={{ display: 'flex', justifyContent: 'space-between', width: '108%' }}>
                                 <h6>{ userProfile.posts.length } posts</h6>
-                                <h6>40 followers</h6>
-                                <h6>40 following</h6>
+                                <h6>{ userProfile.user.followers.length } followers</h6>
+                                <h6>{ userProfile.user.following.length } following</h6>
                             </div>
+                            
+                            { followRender(userProfile) }
                         </div>
                     </div>
                     
