@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "heroku-posbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix ntagram && npm brun build --prefix ntagram",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix ntagram && npm brun build --prefix ntagram",
     "dev": "nodemon app"
   },
   "author": "Fredy Acuna",

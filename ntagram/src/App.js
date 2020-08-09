@@ -11,7 +11,6 @@ import Signup from './components/screens/Signup'
 import Profile from './components/screens/Profile'
 import CreatePost from './components/screens/CreatePost'
 import UserProfile from './components/screens/UserProfile'
-
 export const UserContext = createContext()
 
 
