@@ -31,7 +31,7 @@ app.use(require('./routes/post'))
 app.use(require('./routes/user'))
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('../ntagram/build'))
+    app.use(express.static('ntagram/build'))
     const path = require('path')
     app.get('*', (req, res) => {
         res.sendFile(path.resolve(__dirname, 'ntagram', 'build', 'index.html'))
