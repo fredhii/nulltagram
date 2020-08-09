@@ -1,4 +1,6 @@
+.gitignore
 node_modules
 .vscode
 build
 .env*
+.DS_Store
