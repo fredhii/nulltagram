@@ -6,6 +6,7 @@ import Loading from '../common/Loading'
 /**
  * Name: Profile
  * Description: Displays user profile
+ * TODO(Fredhii): Need to update to use, or mix with userProfile component
  */
 const Profile = () => {
 	const [userPics, setUserPics] = useState([])
