@@ -16,8 +16,36 @@ const Signup = () => {
     const [ url, setUrl ] = React.useState(undefined)
 
     useEffect(() => {
-        if (url) { UploadNewUserData() }
-    }, [ url ])
+        if (url) {
+            // eslint-disable-next-line
+            if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email))
+                return M.toast({ html: 'invalid email', classes:'#c62828 red darken-3' })
+            fetch('/signup', {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    image: url
+                })
+            })
+            .then( res => res.json() )
+            .then( data => {
+                if (data.error)
+                    M.toast({ html: data.error, classes:'#c62828 red darken-3' })
+                else {
+                    M.toast({ html: data.message, classes:'#2e7d32 green darken-3' })
+                    history.push('/signin')
+                }
+            })
+            .catch( err => {
+                console.log(err)
+            })
+         }
+    }, [ url, email, history, name, password ])
 
     /* =================================================================== */
     /* Uploads new account data */
@@ -66,7 +94,6 @@ const Signup = () => {
         })
         .then( res => res.json() )
         .then( data => {
-            console.log('Image Uploaded')
             setUrl( data.url )
         })
         .catch( err => {

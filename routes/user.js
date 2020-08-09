@@ -39,7 +39,7 @@ router.put('/follow', requireLogin, (req, res) => {
       $push: { followers: req.user._id }  
     }, {
         new: true
-    }, ( err, result) => { if (err) { return res.status(422).json({ error: err }) }
+    }, ( err, result ) => { if (err) { return res.status(422).json({ error: err }) }
     })
     User.findByIdAndUpdate(req.user._id, {
         $push: { following: req.body.followerId }  
@@ -54,7 +54,7 @@ router.put('/follow', requireLogin, (req, res) => {
 
 
 /**
- * Name: Unfollow an user
+ * Name: unfollow
  * Description: Remove user follower
  * Return: error or successful message
  */
@@ -63,7 +63,7 @@ router.put('/unfollow', requireLogin, (req, res) => {
       $pull: { followers: req.user._id }  
     }, {
         new: true
-    }, ( err, result) => { if (err) { return res.status(422).json({ error: err }) }
+    }, ( err, result ) => { if (err) { return res.status(422).json({ error: err }) }
     })
     User.findByIdAndUpdate(req.user._id, {
         $pull: { following: req.body.followerId }  
@@ -74,6 +74,22 @@ router.put('/unfollow', requireLogin, (req, res) => {
       }).catch( err => {
           return res.status(422).json({ error: err })
       })
+})
+
+/**
+ * Name: update-profile-image
+ * Description: Remove user follower
+ * Return: error or successful message
+ */
+router.put('/update-profile-image', requireLogin, (req, res) => {
+    User.findByIdAndUpdate(req.user._id, {
+      $set: { image: req.body.image }  
+    }, { new: true },
+        ( err, result ) => {
+            if (err) { return res.status(422).json({ error: err }) 
+        }
+        res.json(result)
+    })
 })
 
 module.exports = router
