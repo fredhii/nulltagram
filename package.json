@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "deps": "npm install && npm install --prefix ntagram",
     "start": "node app.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix ntagram && npm run build --prefix ntagram",
     "dev": "nodemon app"

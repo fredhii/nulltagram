@@ -121,7 +121,7 @@ const UserProfile = () => {
                     method: 'put',
                     headers: {
                         'Content-Type': 'application/json',
-				        'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+                        'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
                     },
                     body: JSON.stringify({ image: data.url })
                 }).then( res => res.json() )

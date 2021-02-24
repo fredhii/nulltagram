@@ -25,18 +25,19 @@ Social network to share your experiences through pictures and look at others exp
 https://nulltagram.herokuapp.com
 
 ### Usage
-1) Run backend
-```sh
-cd server/
-npm i
-npm run dev
-```
-2) In a new terminarl run front-end
-```sh
-cd ntagram/
-npm i
-npm start
-```
+1. Install dependencies
+    ```sh
+    npm run deps
+    ```
+2. Run backend
+    ```sh
+    npm run dev
+    ```
+3. In a new terminarl run react
+    ```sh
+    cd ntagram/
+    npm start
+    ```
 
 # Proyect Colors
 https://colorhunt.co/palette/189745
