@@ -174,13 +174,42 @@ Interactive API documentation available at `/docs` when running the server.
 
 ### Docker Deployment
 
+The application uses a two-container architecture:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Docker Network (bridge)                      │
+│                                                                 │
+│   ┌─────────────────────┐      ┌─────────────────────┐         │
+│   │  Frontend (nginx)   │      │  Backend (Node.js)  │         │
+│   │                     │      │                     │         │
+│   │  - Serves React     │ ───► │  - Express API      │         │
+│   │  - Proxies /api     │      │  - Firebase Admin   │         │
+│   │                     │      │                     │         │
+│   │  Port: 80           │      │  Port: 5001         │         │
+│   │  (exposed)          │      │  (internal only)    │         │
+│   └─────────────────────┘      └─────────────────────┘         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ```bash
-# Build and run
+# Build and run both containers
 docker compose up --build
 
 # Run in background
 docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop containers
+docker compose down
 ```
+
+**URLs:**
+- Frontend: http://localhost (port 80)
+- API Docs: http://localhost/docs
 
 ## Project Structure
 
@@ -199,15 +228,18 @@ nulltagram/
 ├── ntagram/               # React frontend
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── common/    # Reusable components
+│   │   │   ├── common/    # Reusable components (Avatar, Modal, Search)
 │   │   │   └── screens/   # Page components
 │   │   ├── config/
 │   │   │   └── firebase.js
+│   │   ├── context/       # React contexts (Theme)
 │   │   ├── reducers/
-│   │   └── utils/
+│   │   └── utils/         # Utilities (timeAgo, imageCompression)
 │   └── vite.config.js
-├── docker-compose.yml
-├── Dockerfile
+├── docker-compose.yml     # Two-container orchestration
+├── Dockerfile.backend     # Backend container (Node.js)
+├── Dockerfile.frontend    # Frontend container (nginx)
+├── nginx.conf             # nginx reverse proxy config
 └── package.json
 ```
 

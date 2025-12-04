@@ -1,7 +1,7 @@
-# Build stage for React frontend
-FROM node:20-alpine AS frontend-build
+# Frontend Dockerfile - Multi-stage build with nginx
+FROM node:20-alpine AS build
 
-WORKDIR /app/ntagram
+WORKDIR /app
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@9.14.2 --activate
@@ -13,6 +13,7 @@ ARG VITE_FIREBASE_PROJECT_ID
 ARG VITE_FIREBASE_STORAGE_BUCKET
 ARG VITE_FIREBASE_MESSAGING_SENDER_ID
 ARG VITE_FIREBASE_APP_ID
+ARG VITE_API_URL
 
 # Set env vars for build
 ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
@@ -21,6 +22,7 @@ ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
 ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
 ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
 ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
+ENV VITE_API_URL=$VITE_API_URL
 
 # Copy frontend package files
 COPY ntagram/package.json ./
@@ -34,33 +36,17 @@ COPY ntagram/ ./
 # Build frontend
 RUN pnpm build
 
-# Production stage
-FROM node:20-alpine AS production
+# Production stage with nginx
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY proxy_params /etc/nginx/proxy_params
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.14.2 --activate
+# Copy built frontend
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy backend package files
-COPY package.json pnpm-workspace.yaml ./
+# Expose port 80
+EXPOSE 80
 
-# Install backend dependencies only (production)
-RUN pnpm install --prod --frozen-lockfile || pnpm install --prod
-
-# Copy backend source
-COPY app.js ./
-COPY config/ ./config/
-COPY routes/ ./routes/
-COPY middleware/ ./middleware/
-
-# Copy built frontend from build stage
-COPY --from=frontend-build /app/ntagram/build ./ntagram/build
-
-# Set production environment
-ENV NODE_ENV=production
-ENV PORT=5001
-
-EXPOSE 5001
-
-CMD ["node", "app.js"]
+CMD ["nginx", "-g", "daemon off;"]

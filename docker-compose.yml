@@ -1,8 +1,28 @@
 services:
-  app:
+  # Backend API service
+  backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
+    container_name: nulltagram-backend
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+      - FIREBASE_SERVICE_ACCOUNT=${FIREBASE_SERVICE_ACCOUNT}
+    networks:
+      - nulltagram-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5001/openapi.json"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend service (nginx)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
       args:
         - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
         - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
@@ -10,10 +30,19 @@ services:
         - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
         - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
         - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
-    ports:
-      - "5001:5001"
-    environment:
-      - NODE_ENV=production
-      - PORT=5001
-      - FIREBASE_SERVICE_ACCOUNT=${FIREBASE_SERVICE_ACCOUNT}
+    container_name: nulltagram-frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - nulltagram-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  nulltagram-network:
+    driver: bridge
