@@ -1,0 +1,33 @@
+.app-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 16px;
+    margin-top: auto;
+    color: var(--text-secondary);
+    font-size: 12px;
+    border-top: 1px solid var(--border-light);
+    background-color: var(--bg-secondary);
+}
+
+.app-footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.app-footer a:hover {
+    color: var(--text-primary);
+}
+
+.heart-icon {
+    color: #ed4956;
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+.version {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}

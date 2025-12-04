@@ -7,6 +7,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import Loading from '../common/Loading'
 import Modal from '../common/Modal'
 import Avatar from '../common/Avatar'
+import SkeletonImage from '../common/SkeletonImage'
 import M from 'materialize-css'
 import { Settings, Loader2 } from 'lucide-react'
 import './styles/UserProfile.css'
@@ -350,7 +351,7 @@ const UserProfile = () => {
                             <div className='gallery'>
                                 {userProfile.posts.map(item => (
                                     <Link to={`/post/${item._id}`} key={item._id} className='gallery-item'>
-                                        <img alt={item.title} src={item.picture} />
+                                        <SkeletonImage alt={item.title} src={item.picture} />
                                     </Link>
                                 ))}
                             </div>

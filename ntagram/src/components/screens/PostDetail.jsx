@@ -5,6 +5,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 /* Components */
 import Loading from '../common/Loading'
 import Avatar from '../common/Avatar'
+import SkeletonImage from '../common/SkeletonImage'
 import M from 'materialize-css'
 import { ArrowLeft, Trash2, Loader2 } from 'lucide-react'
 /* Utils */
@@ -204,7 +205,7 @@ const PostDetail = () => {
 			<div className='post-detail-container'>
 				{/* Post Image */}
 				<div className='post-detail-image-container'>
-					<img className='post-detail-image' alt={post.title} src={post.picture} />
+					<SkeletonImage className='post-detail-image' alt={post.title} src={post.picture} />
 				</div>
 
 				{/* Post Info */}

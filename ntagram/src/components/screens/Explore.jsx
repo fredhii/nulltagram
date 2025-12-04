@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { getAuthToken } from '../../App'
 /* Components */
 import Loading from '../common/Loading'
+import SkeletonImage from '../common/SkeletonImage'
 import { RefreshCw } from 'lucide-react'
 /* Style */
 import './styles/Explore.css'
@@ -72,7 +73,7 @@ const Explore = () => {
                 <div className='explore-grid'>
                     {posts.map(post => (
                         <Link to={`/post/${post._id}`} key={post._id} className='explore-item'>
-                            <img src={post.picture} alt={post.title} />
+                            <SkeletonImage src={post.picture} alt={post.title} />
                             <div className='explore-item-overlay'>
                                 <span><i className='material-icons'>favorite</i> {post.likes.length}</span>
                                 <span><i className='material-icons'>chat_bubble</i> {post.comments.length}</span>

@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, createContext, useReducer } from 'react'
 import NavBar from './components/Navbar'
+import Footer from './components/common/Footer'
 import './App.css'
 import './theme.css'
 import { ThemeProvider } from './context/ThemeContext'
@@ -87,8 +88,13 @@ function App() {
     <ThemeProvider>
       <UserContext.Provider value={{ state, dispatch }}>
         <BrowserRouter>
-          <NavBar />
-          <Routing />
+          <div className='app-layout'>
+            <NavBar />
+            <main className='app-main'>
+              <Routing />
+            </main>
+            <Footer />
+          </div>
         </BrowserRouter>
       </UserContext.Provider>
     </ThemeProvider>

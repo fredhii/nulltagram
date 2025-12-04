@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import Loading from '../common/Loading'
 import Modal from '../common/Modal'
 import Avatar from '../common/Avatar'
+import SkeletonImage from '../common/SkeletonImage'
 import M from 'materialize-css'
 import { MoreHorizontal, Loader2 } from 'lucide-react'
 /* Utils */
@@ -263,7 +264,7 @@ const Home = () => {
 
 						{/* Post Image */}
 						<Link to={`/post/${item._id}`}>
-							<img className='post-image' alt={item.title} src={item.picture} />
+							<SkeletonImage className='post-image' alt={item.title} src={item.picture} />
 						</Link>
 
 						{/* Post Content */}
