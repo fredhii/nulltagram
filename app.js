@@ -24,7 +24,9 @@ app.use(require('./routes/user'))
 app.get('/openapi.json', (req, res) => res.json(openApiSpec))
 app.use('/docs', apiReference({ spec: { content: openApiSpec } }))
 
-if (process.env.NODE_ENV === 'production') {
+// In production with SERVE_STATIC=true, serve frontend from backend
+// (for non-Docker deployments where backend serves everything)
+if (process.env.NODE_ENV === 'production' && process.env.SERVE_STATIC === 'true') {
     app.use(express.static('ntagram/build'))
     const path = require('path')
     app.get('*', (req, res) => {

@@ -4,7 +4,7 @@ import { getStorage } from 'firebase/storage'
 
 // Read from runtime config (window.__ENV__) or fallback to build-time env vars
 const getEnv = (key) => {
-  if (typeof window !== 'undefined' && window.__ENV__) {
+  if (typeof window !== 'undefined' && window.__ENV__ && window.__ENV__[key]) {
     return window.__ENV__[key]
   }
   return import.meta.env[key]
