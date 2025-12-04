@@ -19,6 +19,12 @@ app.use(require('./routes/post'))
 app.use(require('./routes/user'))
 
 /* ==================================================== */
+/* HEALTH CHECK */
+/* ==================================================== */
+app.get('/', (req, res) => res.json({ status: 'ok', service: 'nulltagram-api' }))
+app.get('/health', (req, res) => res.json({ status: 'ok' }))
+
+/* ==================================================== */
 /* API DOCUMENTATION */
 /* ==================================================== */
 app.get('/openapi.json', (req, res) => res.json(openApiSpec))
