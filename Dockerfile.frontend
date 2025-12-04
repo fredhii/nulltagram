@@ -38,5 +38,6 @@ RUN chmod +x /entrypoint.sh
 # Expose port 80
 EXPOSE 80
 
-# Use entrypoint script to inject runtime config
+# Use entrypoint script to inject runtime config, then start nginx
 ENTRYPOINT ["/entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
