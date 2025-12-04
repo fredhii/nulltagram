@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { API_URL } from '../../config/api'
 import M from 'materialize-css'
 import { useNavigate } from 'react-router-dom'
 import { getAuthToken } from '../../App'
@@ -100,7 +101,7 @@ const CreatePost = () => {
                 return
             }
 
-            const res = await fetch('/createpost', {
+            const res = await fetch(`${API_URL}/createpost`, {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
+import { API_URL } from '../../config/api'
 import { UserContext, getAuthToken } from '../../App'
 import Loading from '../common/Loading'
 import Avatar from '../common/Avatar'
@@ -20,7 +21,7 @@ const Profile = () => {
 			const token = await getAuthToken()
 			if (!token) return
 
-			const res = await fetch('/mypost', {
+			const res = await fetch(`${API_URL}/mypost`, {
 				headers: { 'Authorization': `Bearer ${token}` }
 			})
 			const result = await res.json()

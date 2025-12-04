@@ -1,4 +1,5 @@
 /* Dependencies */
+import { API_URL } from '../../config/api'
 import React, { useState, useEffect, useContext, useRef, useCallback } from 'react'
 import { UserContext, getAuthToken } from '../../App'
 import { Link } from 'react-router-dom'
@@ -43,8 +44,8 @@ const Home = () => {
 
 		try {
 			const url = cursorParam
-				? `/allposts?limit=10&cursor=${cursorParam}`
-				: '/allposts?limit=10'
+				? `${API_URL}/allposts?limit=10&cursor=${cursorParam}`
+				: `${API_URL}/allposts?limit=10`
 
 			const res = await fetch(url, {
 				headers: { 'Authorization': `Bearer ${token}` }
@@ -98,7 +99,7 @@ const Home = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch('/givelike', {
+			const res = await fetch(`${API_URL}/givelike`, {
 				method: 'put',
 				headers: {
 					'Content-Type': 'application/json',
@@ -124,7 +125,7 @@ const Home = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch('/removelike', {
+			const res = await fetch(`${API_URL}/removelike`, {
 				method: 'put',
 				headers: {
 					'Content-Type': 'application/json',
@@ -151,7 +152,7 @@ const Home = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch('/insert-comment', {
+			const res = await fetch(`${API_URL}/insert-comment`, {
 				method: 'put',
 				headers: {
 					'Content-Type': 'application/json',
@@ -180,7 +181,7 @@ const Home = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch(`/delete-post/${postId}`, {
+			const res = await fetch(`${API_URL}/delete-post/${postId}`, {
 				method: 'delete',
 				headers: { 'Authorization': `Bearer ${token}` },
 			})

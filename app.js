@@ -4,13 +4,15 @@
 require('dotenv').config()
 require('./config/firebase') // Initialize Firebase
 const express = require('express')
+const cors = require('cors')
 const { apiReference } = require('@scalar/express-api-reference')
 const openApiSpec = require('./config/openapi')
 const app = express()
 
 /* ==================================================== */
-/* ROUTES */
+/* MIDDLEWARE */
 /* ==================================================== */
+app.use(cors())
 app.use(express.json())
 app.use(require('./routes/auth'))
 app.use(require('./routes/post'))

@@ -1,4 +1,5 @@
 /* Dependencies */
+import { API_URL } from '../../config/api'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { getAuthToken } from '../../App'
@@ -30,7 +31,7 @@ const Explore = () => {
         else setLoading(true)
 
         try {
-            const res = await fetch('/explore?limit=30', {
+            const res = await fetch(`${API_URL}/explore?limit=30`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
             const result = await res.json()

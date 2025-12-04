@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { API_URL } from '../../config/api'
 import { Link, useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../config/firebase'
@@ -64,7 +65,7 @@ const Signup = () => {
             const token = await userCredential.user.getIdToken()
 
             // Create user profile in Firestore via backend
-            const res = await fetch('/create-profile', {
+            const res = await fetch(`${API_URL}/create-profile`, {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',

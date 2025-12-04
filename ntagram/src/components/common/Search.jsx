@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { API_URL } from '../../config/api'
 import { Link } from 'react-router-dom'
 import { Search as SearchIcon, X, Loader2 } from 'lucide-react'
 import { getAuthToken } from '../../App'
@@ -40,7 +41,7 @@ const Search = () => {
                 const token = await getAuthToken()
                 if (!token) return
 
-                const res = await fetch(`/search-users?q=${encodeURIComponent(query)}`, {
+                const res = await fetch(`${API_URL}/search-users?q=${encodeURIComponent(query)}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 const data = await res.json()

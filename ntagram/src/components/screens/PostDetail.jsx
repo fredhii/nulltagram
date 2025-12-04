@@ -1,4 +1,5 @@
 /* Dependencies */
+import { API_URL } from '../../config/api'
 import React, { useState, useEffect, useContext } from 'react'
 import { UserContext, getAuthToken } from '../../App'
 import { Link, useParams, useNavigate } from 'react-router-dom'
@@ -36,7 +37,7 @@ const PostDetail = () => {
 			if (!token) return
 
 			try {
-				const res = await fetch(`/post/${postId}`, {
+				const res = await fetch(`${API_URL}/post/${postId}`, {
 					headers: { 'Authorization': `Bearer ${token}` }
 				})
 				if (!res.ok) {
@@ -66,7 +67,7 @@ const PostDetail = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch('/givelike', {
+			const res = await fetch(`${API_URL}/givelike`, {
 				method: 'put',
 				headers: {
 					'Content-Type': 'application/json',
@@ -92,7 +93,7 @@ const PostDetail = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch('/removelike', {
+			const res = await fetch(`${API_URL}/removelike`, {
 				method: 'put',
 				headers: {
 					'Content-Type': 'application/json',
@@ -120,7 +121,7 @@ const PostDetail = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch('/insert-comment', {
+			const res = await fetch(`${API_URL}/insert-comment`, {
 				method: 'put',
 				headers: {
 					'Content-Type': 'application/json',
@@ -149,7 +150,7 @@ const PostDetail = () => {
 		if (!token) return
 
 		try {
-			const res = await fetch(`/delete-comment/${post._id}/${commentIndex}`, {
+			const res = await fetch(`${API_URL}/delete-comment/${post._id}/${commentIndex}`, {
 				method: 'delete',
 				headers: { 'Authorization': `Bearer ${token}` },
 			})
@@ -175,7 +176,7 @@ const PostDetail = () => {
 		if (!token) return
 
 		try {
-			await fetch(`/delete-post/${post._id}`, {
+			await fetch(`${API_URL}/delete-post/${post._id}`, {
 				method: 'delete',
 				headers: { 'Authorization': `Bearer ${token}` },
 			})

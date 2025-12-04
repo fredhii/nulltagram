@@ -30,6 +30,7 @@ services:
         - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
         - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
         - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
+        - VITE_API_URL=${VITE_API_URL:-http://backend:5001}
     container_name: nulltagram-frontend
     ports:
       - "${PORT:-80}:80"

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
+import { API_URL } from '../../config/api'
 import { Link } from 'react-router-dom'
 import { UserContext, getAuthToken } from '../../App'
 import { useParams } from 'react-router-dom'
@@ -33,7 +34,7 @@ const UserProfile = () => {
             const token = await getAuthToken()
             if (!token) return
 
-            const res = await fetch(`/user/${userid}`, {
+            const res = await fetch(`${API_URL}/user/${userid}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
             const result = await res.json()
@@ -57,7 +58,7 @@ const UserProfile = () => {
         if (!token) return
 
         try {
-            const res = await fetch('/follow', {
+            const res = await fetch(`${API_URL}/follow`, {
                 method: 'put',
                 headers: {
                     'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ const UserProfile = () => {
         if (!token) return
 
         try {
-            const res = await fetch('/unfollow', {
+            const res = await fetch(`${API_URL}/unfollow`, {
                 method: 'put',
                 headers: {
                     'Content-Type': 'application/json',
@@ -164,7 +165,7 @@ const UserProfile = () => {
             const token = await getAuthToken()
             if (!token) return
 
-            const res = await fetch('/update-profile-image', {
+            const res = await fetch(`${API_URL}/update-profile-image`, {
                 method: 'put',
                 headers: {
                     'Content-Type': 'application/json',
@@ -198,7 +199,7 @@ const UserProfile = () => {
         if (!token) return
 
         try {
-            const res = await fetch('/update-profile', {
+            const res = await fetch(`${API_URL}/update-profile`, {
                 method: 'put',
                 headers: {
                     'Content-Type': 'application/json',

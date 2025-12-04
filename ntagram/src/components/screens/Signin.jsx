@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { API_URL } from '../../config/api'
 import { Link, useNavigate } from 'react-router-dom'
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '../../config/firebase'
@@ -35,7 +36,7 @@ const Signin = () => {
             const token = await userCredential.user.getIdToken()
 
             // Get user profile from backend
-            const res = await fetch('/get-profile', {
+            const res = await fetch(`${API_URL}/get-profile`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -71,14 +72,14 @@ const Signin = () => {
             const token = await result.user.getIdToken()
 
             // Try to get existing profile
-            let res = await fetch('/get-profile', {
+            let res = await fetch(`${API_URL}/get-profile`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
             let data = await res.json()
 
             // If no profile exists, create one
             if (data.error) {
-                res = await fetch('/create-profile', {
+                res = await fetch(`${API_URL}/create-profile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

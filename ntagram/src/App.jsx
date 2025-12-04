@@ -7,6 +7,7 @@ import { ThemeProvider } from './context/ThemeContext'
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './config/firebase'
+import { API_URL } from './config/api'
 import { reducer, initialState } from './reducers/userReducer'
 /* Import routes */
 import Home from './components/screens/Home'
@@ -40,7 +41,7 @@ const Routing = () => {
         // User is signed in, get profile from backend
         try {
           const token = await firebaseUser.getIdToken()
-          const res = await fetch('/get-profile', {
+          const res = await fetch(`${API_URL}/get-profile`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
           const data = await res.json()
