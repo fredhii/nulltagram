@@ -1,51 +1,42 @@
-# Frontend Dockerfile - Multi-stage build with nginx
+# Stage 1: Build the application
 FROM node:20-alpine AS build
 
+# Set the working directory
 WORKDIR /app
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@9.14.2 --activate
 
-# Build args (Vite uses VITE_ prefix)
-ARG VITE_FIREBASE_API_KEY
-ARG VITE_FIREBASE_AUTH_DOMAIN
-ARG VITE_FIREBASE_PROJECT_ID
-ARG VITE_FIREBASE_STORAGE_BUCKET
-ARG VITE_FIREBASE_MESSAGING_SENDER_ID
-ARG VITE_FIREBASE_APP_ID
-ARG VITE_API_URL
+# Copy package.json and pnpm-lock.yaml
+COPY ntagram/package.json ntagram/pnpm-lock.yaml* ./
 
-# Set env vars for build
-ENV VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
-ENV VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
-ENV VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
-ENV VITE_FIREBASE_STORAGE_BUCKET=$VITE_FIREBASE_STORAGE_BUCKET
-ENV VITE_FIREBASE_MESSAGING_SENDER_ID=$VITE_FIREBASE_MESSAGING_SENDER_ID
-ENV VITE_FIREBASE_APP_ID=$VITE_FIREBASE_APP_ID
-ENV VITE_API_URL=$VITE_API_URL
-
-# Copy frontend package files
-COPY ntagram/package.json ./
-
-# Install frontend dependencies
+# Install dependencies
 RUN pnpm install --frozen-lockfile || pnpm install
 
-# Copy frontend source
+# Copy the rest of the application code
 COPY ntagram/ ./
 
-# Build frontend
+# Build the application
 RUN pnpm build
 
-# Production stage with nginx
-FROM nginx:alpine
+# Stage 2: Serve the application using Nginx
+FROM nginx:alpine AS production
 
-# Copy nginx config
+# Install gettext for envsubst (optional, for more advanced templating)
+RUN apk add --no-cache gettext
+
+# Copy the build output from the previous stage
+COPY --from=build /app/build /usr/share/nginx/html
+
+# Copy the custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built frontend
-COPY --from=build /app/build /usr/share/nginx/html
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Expose port 80
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# Use entrypoint script to inject runtime config
+ENTRYPOINT ["/entrypoint.sh"]
