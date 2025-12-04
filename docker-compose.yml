@@ -18,8 +18,8 @@ services:
       timeout: 10s
       retries: 3
 
-  # Frontend service (nginx) - named 'app' for Dokploy compatibility
-  app:
+  # Frontend service (nginx)
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile.frontend
@@ -30,7 +30,7 @@ services:
         - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
         - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
         - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
-    container_name: nulltagram-app
+    container_name: nulltagram-frontend
     ports:
       - "${PORT:-80}:80"
     depends_on:
