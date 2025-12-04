@@ -1,6 +1,13 @@
-.gitignore
 node_modules
 .vscode
 .DS_Store
 .env
+ntagram/.env
 build
+package-lock.json
+ntagram/package-lock.json
+pnpm-lock.yaml
+ntagram/pnpm-lock.yaml
+*-firebase-admin-sdk.json
+*-firebase-adminsdk-*.json
+dokploy.env

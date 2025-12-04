@@ -1,84 +1,80 @@
 const express = require('express')
 const router = express.Router()
-const mongoose = require('mongoose')
-const User = mongoose.model('User')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const requiredLogin = require('../middleware/requireLogin')
+const { db, auth } = require('../config/firebase')
+const requireLogin = require('../middleware/requireLogin')
+
+const DEFAULT_IMAGE = 'https://res.cloudinary.com/dlvlyhpo7/image/upload/v1614182894/585e4bf3cb11b227491c339a_de90vh.png'
 
 /**
  * Name: protected
  * Description: Validates if user is logged in
  * Return: error or successful message
  */
-router.get('/protected', requiredLogin, (req, res) => {
-    res.send('hellou user')
+router.get('/protected', requireLogin, (req, res) => {
+    res.send('hello user')
 })
 
 /**
- * Name: signup
- * @req: receive name, email and password
- * Return: error or successful message
+ * Name: create-profile
+ * Description: Creates user profile in Firestore after Firebase Auth signup
+ * @req: Firebase ID token in Authorization header, name and optional image in body
+ * Return: user data or error
  */
-router.post('/signup', (req, res) => {
-    const { name, email, password, image } = req.body
-    if ( !email || !password || !name )
-       return res.status(422).json({error: 'please add all the fields'})
+router.post('/create-profile', async (req, res) => {
+    const { authorization } = req.headers
+    if (!authorization || !authorization.startsWith('Bearer '))
+        return res.status(401).json({ error: 'unauthorized' })
 
-    User.findOne({ email: email })
-    .then((savedUser) => {
-        if (savedUser)
-            return res.status(422).json({error: 'user already have account'})
+    const token = authorization.replace('Bearer ', '')
 
-        bcrypt.hash(password, 12)
-        .then( hashedpassword => {
-            const user = new User({
-                email,
-                password: hashedpassword,
-                name,
-                image
-            })
-            user.save()
-            .then( () => {
-                res.json({ message: 'register successfully' })
-            })
-            .catch( err => {
-                console.log(err)
-            })
+    try {
+        const decodedToken = await auth.verifyIdToken(token)
+        const uid = decodedToken.uid
+        const email = decodedToken.email
+
+        const { name, image } = req.body
+        if (!name)
+            return res.status(422).json({ error: 'name is required' })
+
+        // Check if user already exists
+        const userDoc = await db.collection('users').doc(uid).get()
+        if (userDoc.exists)
+            return res.status(422).json({ error: 'profile already exists' })
+
+        // Create user profile
+        const userData = {
+            name,
+            email,
+            image: image || DEFAULT_IMAGE,
+            followers: [],
+            following: [],
+            createdAt: new Date().toISOString()
+        }
+
+        await db.collection('users').doc(uid).set(userData)
+
+        res.json({
+            message: 'profile created successfully',
+            user: { _id: uid, ...userData }
         })
-    })
-    .catch(err => {
-        console.log(err)
-    })
+    } catch (err) {
+        console.error('Create profile error:', err)
+        // Check if it's a Firestore "NOT_FOUND" error (database not created)
+        if (err.code === 5 || err.message?.includes('NOT_FOUND')) {
+            return res.status(503).json({ error: 'Database not available. Please create Firestore database in Firebase Console.' })
+        }
+        res.status(500).json({ error: 'failed to create profile' })
+    }
 })
 
 /**
- * Name: signin
- * @req: receive email and password
- * Return: token on success or error
+ * Name: get-profile
+ * Description: Gets current user profile
+ * Return: user data or error
  */
-router.post('/signin', (req, res) => {
-    const { email, password } = req.body
-    if ( !email || !password )
-        return res.status(422).json({ error: 'please add email and password' })
-
-    User.findOne({ email:email })
-    .then( savedUser => {
-        if (!savedUser)
-            return res.status(422).json({ error: 'not registered email, try to sign up' })
-
-        bcrypt.compare( password, savedUser.password )
-        .then( doMatch => {
-            if (!doMatch)
-                return res.status(422).json({ error: 'invalid password' })
-            const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET )
-            const { _id, name, email, image, followers, following } = savedUser
-            res.json({ token, user: { _id, name, email, image, followers, following } })
-        })
-        .catch( err => {
-            console.log(err)
-        })
-    })
+router.get('/get-profile', requireLogin, (req, res) => {
+    const { _id, name, email, image, followers, following } = req.user
+    res.json({ user: { _id, name, email, image, followers, following } })
 })
 
 module.exports = router

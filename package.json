@@ -1,22 +1,27 @@
 {
   "name": "nulltagram_server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Social network to share experiences through pictures",
+  "main": "app.js",
   "scripts": {
-    "deps": "npm install && npm install --prefix ntagram",
+    "deps": "pnpm install && pnpm --filter ntagram install",
     "start": "node app.js",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix ntagram && npm run build --prefix ntagram",
-    "dev": "nodemon app"
+    "dev": "nodemon app.js",
+    "build": "pnpm --filter ntagram build"
   },
   "author": "Fredy Acuna",
   "license": "ISC",
+  "packageManager": "pnpm@9.14.2",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.21",
-    "nodemon": "^2.0.4"
+    "@scalar/express-api-reference": "^0.8.25",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "firebase-admin": "^13.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }

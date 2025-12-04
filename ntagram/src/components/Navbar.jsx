@@ -1,19 +1,27 @@
 import React, { useContext } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { signOut } from 'firebase/auth'
+import { auth } from '../config/firebase'
 import { UserContext } from '../App'
 import Drowpdown from './common/Dropwdown'
+import Search from './common/Search'
 /**
  * Name: NavBar
  * Description: User navigation bar
  */
 const NavBar = () => {
-	const history = useHistory()
+	const navigate = useNavigate()
 	const { state, dispatch } = useContext(UserContext)
 
-	const sessionOff = () => {
-		localStorage.clear()
-		dispatch({ type: 'CLEAR' })
-		history.push('/signin')
+	const sessionOff = async () => {
+		try {
+			await signOut(auth)
+			localStorage.clear()
+			dispatch({ type: 'CLEAR' })
+			navigate('/signin')
+		} catch (err) {
+			console.error('Logout error:', err)
+		}
 	}
 	/* =================================================================== */
 	/* Displays login or home view */
@@ -55,6 +63,7 @@ const NavBar = () => {
 					>
 						Nulltagram
 					</Link>
+					{state && <Search />}
 					<ul id='nav-mobile' className='right'>
 						{renderList()}
 					</ul>

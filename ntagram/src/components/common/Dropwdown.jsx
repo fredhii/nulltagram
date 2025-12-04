@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react'
 import { UserContext } from '../../App'
 import { Link } from 'react-router-dom'
 import M from 'materialize-css'
+import Avatar from './Avatar'
 
 const Dropdown = (props) => {
 	const { state } = useContext(UserContext) /* Get ID from logged user */
@@ -24,13 +25,9 @@ const Dropdown = (props) => {
 						className='dropdown-trigger'
 						href='#!'
 						data-target='dropdown1'
-						style={{ color: 'black' }}
+						style={{ color: 'black', display: 'flex', alignItems: 'center' }}
 					>
-						<img
-							className='profile-img'
-							alt='profile pic'
-							src={ state.image }
-						/>
+						<Avatar src={state?.image} alt={state?.name} size={32} />
 						<i className='material-icons right'>arrow_drop_down</i>
 					</a>
 					<ul id='dropdown1' className='dropdown-content'>

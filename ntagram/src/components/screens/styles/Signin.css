@@ -7,6 +7,57 @@ div.container__signin {
 
 div.container__img {
   margin-right: 30px;
+  position: relative;
+}
+
+div.container__img img {
+  max-width: 350px;
+  border-radius: 8px;
+}
+
+.photo-credit {
+  font-size: 10px;
+  color: #888;
+  margin-top: 4px;
+  text-align: right;
+}
+
+.photo-credit a {
+  color: #666;
+}
+
+.divider-text {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+}
+
+.divider-text::before,
+.divider-text::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.divider-text span {
+  padding: 0 12px;
+  color: #888;
+  font-size: 14px;
+}
+
+.google-btn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #ddd !important;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.google-btn img {
+  width: 18px;
+  height: 18px;
 }
 
 @media only screen and (max-width: 600px) {

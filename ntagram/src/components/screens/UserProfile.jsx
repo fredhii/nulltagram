@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import { UserContext } from '../../App'
+import { UserContext, getAuthToken } from '../../App'
 import { useParams } from 'react-router-dom'
+import { storage } from '../../config/firebase'
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import Loading from '../common/Loading'
 import Modal from '../common/Modal'
+import Avatar from '../common/Avatar'
+import M from 'materialize-css'
 
 
 
@@ -12,71 +16,75 @@ import Modal from '../common/Modal'
  * Description: Displays user profile
  */
 const UserProfile = () => {
-    const [ userProfile , setUserProfile ] = useState(null)
+    const [userProfile, setUserProfile] = useState(null)
     const { state, dispatch } = useContext(UserContext)
     const { userid } = useParams()
-    const [ profileImage, setProfileImage ] = useState('')
 
     /* =================================================================== */
     /* Gets user images */
     /* =================================================================== */
     useEffect(() => {
-        fetch(`/user/${userid}`, {
-            headers: { 'Authorization': 'Bearer ' + localStorage.getItem('jwt') }
-        }).then( res => res.json() )
-        .then(result => {
+        const fetchProfile = async () => {
+            const token = await getAuthToken()
+            if (!token) return
+
+            const res = await fetch(`/user/${userid}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            const result = await res.json()
             setUserProfile(result)
-        })
-    }, [ userid ])
+        }
+        fetchProfile()
+    }, [userid])
 
     /* =================================================================== */
     /* Follow user */
     /* =================================================================== */
-    const followUser = () => {
+    const followUser = async () => {
+        const token = await getAuthToken()
+        if (!token) return
+
         fetch('/follow', {
             method: 'put',
             headers: {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify({
-                followerId: userid
-            })
-        }).then( res => res.json() )
-        .then( data => {
+            body: JSON.stringify({ followerId: userid })
+        }).then(res => res.json())
+        .then(data => {
             dispatch({ type: 'UPDATE', payload: { following: data.following, followers: data.followers } })
             localStorage.setItem('user', JSON.stringify(data))
-            setUserProfile((oldState) => {
-                return {
-                    ...oldState,
-                    user: {
-                        ...oldState.user,
-                        followers: [ ...oldState.user.followers, data._id ]
-                    }
+            setUserProfile((oldState) => ({
+                ...oldState,
+                user: {
+                    ...oldState.user,
+                    followers: [...oldState.user.followers, data._id]
                 }
-            })
+            }))
         })
     }
 
     /* =================================================================== */
     /* Unfollow user */
     /* =================================================================== */
-    const unfollowUser = () => {
+    const unfollowUser = async () => {
+        const token = await getAuthToken()
+        if (!token) return
+
         fetch('/unfollow', {
             method: 'put',
             headers: {
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify({
-                followerId: userid
-            })
-        }).then( res => res.json() )
-        .then( data => {
+            body: JSON.stringify({ followerId: userid })
+        }).then(res => res.json())
+        .then(data => {
             dispatch({ type: 'UPDATE', payload: { following: data.following, followers: data.followers } })
             localStorage.setItem('user', JSON.stringify(data))
             setUserProfile((oldState) => {
-                const remainingFollowers = oldState.user.followers.filter(item => item !== data._id )
+                const remainingFollowers = oldState.user.followers.filter(item => item !== data._id)
                 return {
                     ...oldState,
                     user: {
@@ -102,40 +110,42 @@ const UserProfile = () => {
     /* =================================================================== */
     /* Update profile image */
     /* =================================================================== */
-    const UpdateProfileImage = (file) => {
-        setProfileImage(file)
-    }
-    useEffect(() => {
-        if (profileImage) {
-            const data = new FormData()
-            data.append('file', profileImage)
-            data.append('upload_preset', 'nulltagram')
-            data.append('cloud_name', 'dlvlyhpo7')
-            fetch('https://api.cloudinary.com/v1_1/dlvlyhpo7/image/upload', {
-                method: 'post',
-                body: data
+    const UpdateProfileImage = async (file) => {
+        if (!file) return
+
+        try {
+            M.toast({ html: 'Uploading...', classes: '#2196f3 blue' })
+
+            // Upload to Firebase Storage
+            const fileName = `avatars/${state._id}_${Date.now()}`
+            const storageRef = ref(storage, fileName)
+
+            await uploadBytes(storageRef, file)
+            const imageUrl = await getDownloadURL(storageRef)
+
+            // Update profile in backend
+            const token = await getAuthToken()
+            if (!token) return
+
+            const res = await fetch('/update-profile-image', {
+                method: 'put',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ image: imageUrl })
             })
-            .then( res => res.json() )
-            .then( data => {
-                fetch('/update-profile-image', {
-                    method: 'put',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
-                    },
-                    body: JSON.stringify({ image: data.url })
-                }).then( res => res.json() )
-                .then( result => {
-                    dispatch({ type: 'UPDATEPROFILEIMAGE', payload: result.image })
-                    localStorage.setItem('user', JSON.stringify({ ...state, image: result.image }))
-                    window.location.reload()
-                })
-                .catch( err => {
-                    console.log(err)
-                })
-            })
+            const result = await res.json()
+
+            dispatch({ type: 'UPDATEPROFILEIMAGE', payload: result.image })
+            localStorage.setItem('user', JSON.stringify({ ...state, image: result.image }))
+            M.toast({ html: 'Profile image updated!', classes: '#2e7d32 green darken-3' })
+            window.location.reload()
+        } catch (err) {
+            console.error('Error updating profile image:', err)
+            M.toast({ html: 'Error updating image', classes: '#c62828 red darken-3' })
         }
-    }, [ profileImage, state, dispatch ])
+    }
 
     /* =================================================================== */
     /* HTML */
@@ -150,18 +160,12 @@ const UserProfile = () => {
                         <div>
                             {
                                 userid !== state._id
-                                ?   <img style={{ width:'160px', height:'160px', borderRadius:'80px' }} 
-                                        src={ userProfile.user.image }
-                                        alt=''
-                                    />
-                                :   <Modal 
+                                ?   <Avatar src={userProfile.user.image} alt={userProfile.user.name} size={160} />
+                                :   <Modal
                                         id={'user-profile' + state._id}
                                         trigger={
                                             <Link to='' className='waves-effect waves-light modal-trigger' data-target={'user-profile' + state._id}>
-                                                <img style={{ width:'160px', height:'160px', borderRadius:'80px' }} 
-                                                    src={ userProfile.user.image }
-                                                    alt=''
-                                                />
+                                                <Avatar src={userProfile.user.image} alt={userProfile.user.name} size={160} />
                                             </Link>
                                         }
                                         style={{ width: '40%', borderRadius: '10px' }}

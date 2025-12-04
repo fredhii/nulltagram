@@ -1,0 +1,12 @@
+node_modules
+ntagram/node_modules
+ntagram/build
+.git
+.gitignore
+.env
+.env-sample
+*.md
+.vscode
+.DS_Store
+functions
+test
