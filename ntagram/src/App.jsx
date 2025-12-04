@@ -1,6 +1,8 @@
 import React, { useContext, useState, useEffect, createContext, useReducer } from 'react'
 import NavBar from './components/Navbar'
 import './App.css'
+import './theme.css'
+import { ThemeProvider } from './context/ThemeContext'
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from './config/firebase'
@@ -13,6 +15,7 @@ import Profile from './components/screens/Profile'
 import CreatePost from './components/screens/CreatePost'
 import UserProfile from './components/screens/UserProfile'
 import PostDetail from './components/screens/PostDetail'
+import Explore from './components/screens/Explore'
 
 export const UserContext = createContext()
 
@@ -73,6 +76,7 @@ const Routing = () => {
       <Route path='/create' element={<CreatePost />} />
       <Route path='/profile/:userid' element={<UserProfile />} />
       <Route path='/post/:postId' element={<PostDetail />} />
+      <Route path='/explore' element={<Explore />} />
     </Routes>
   )
 }
@@ -80,12 +84,14 @@ const Routing = () => {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState)
   return (
-    <UserContext.Provider value={{ state, dispatch }}>
-      <BrowserRouter>
-        <NavBar />
-        <Routing />
-      </BrowserRouter>
-    </UserContext.Provider>
+    <ThemeProvider>
+      <UserContext.Provider value={{ state, dispatch }}>
+        <BrowserRouter>
+          <NavBar />
+          <Routing />
+        </BrowserRouter>
+      </UserContext.Provider>
+    </ThemeProvider>
   )
 }
 

@@ -5,6 +5,7 @@ import { getAuthToken } from '../../App'
 import { storage } from '../../config/firebase'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import { ImagePlus, X, Loader2 } from 'lucide-react'
+import { compressImage, formatFileSize } from '../../utils/imageCompression'
 import './styles/CreatePost.css'
 
 /**
@@ -19,18 +20,52 @@ const CreatePost = () => {
     const [imagePreview, setImagePreview] = useState(null)
     const [loading, setLoading] = useState(false)
     const [uploadProgress, setUploadProgress] = useState('')
+    const [compressionInfo, setCompressionInfo] = useState(null)
 
-    const handleImageSelect = (e) => {
+    const handleImageSelect = async (e) => {
         const file = e.target.files[0]
         if (file) {
-            setImage(file)
-            setImagePreview(URL.createObjectURL(file))
+            try {
+                const originalSize = file.size
+                setUploadProgress('Compressing image...')
+                setLoading(true)
+
+                // Compress the image
+                const compressedBlob = await compressImage(file, {
+                    maxWidth: 1080,
+                    maxHeight: 1080,
+                    quality: 0.85
+                })
+
+                // Create a File object from the blob
+                const compressedFile = new File([compressedBlob], compressedBlob.name || file.name, {
+                    type: 'image/jpeg'
+                })
+
+                setImage(compressedFile)
+                setImagePreview(URL.createObjectURL(compressedFile))
+                setCompressionInfo({
+                    original: formatFileSize(originalSize),
+                    compressed: formatFileSize(compressedFile.size),
+                    saved: Math.round((1 - compressedFile.size / originalSize) * 100)
+                })
+            } catch (err) {
+                console.error('Compression error:', err)
+                // Fall back to original file
+                setImage(file)
+                setImagePreview(URL.createObjectURL(file))
+                setCompressionInfo(null)
+            } finally {
+                setLoading(false)
+                setUploadProgress('')
+            }
         }
     }
 
     const removeImage = () => {
         setImage(null)
         setImagePreview(null)
+        setCompressionInfo(null)
     }
 
     /* =================================================================== */
@@ -110,6 +145,11 @@ const CreatePost = () => {
                             <button className='remove-image-btn' onClick={removeImage} type='button'>
                                 <X size={20} />
                             </button>
+                            {compressionInfo && compressionInfo.saved > 0 && (
+                                <div className='compression-info'>
+                                    Compressed: {compressionInfo.original} → {compressionInfo.compressed} ({compressionInfo.saved}% saved)
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <label className='upload-placeholder'>

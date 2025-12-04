@@ -79,6 +79,35 @@ router.get('/allposts', requireLogin, async (req, res) => {
 })
 
 /**
+ * Name: explore
+ * Description: Get posts for explore page (shuffled)
+ * Return: error or posts array
+ */
+router.get('/explore', requireLogin, async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 20
+
+        // Get recent posts (last 100), then shuffle
+        const snapshot = await db.collection('posts')
+            .orderBy('createdAt', 'desc')
+            .limit(100)
+            .get()
+
+        let posts = await Promise.all(
+            snapshot.docs.map(doc => populatePost(doc))
+        )
+
+        // Shuffle the posts for variety
+        posts = posts.sort(() => Math.random() - 0.5).slice(0, limit)
+
+        res.json({ posts })
+    } catch (err) {
+        console.error('Explore error:', err)
+        res.status(500).json({ error: 'failed to get explore posts' })
+    }
+})
+
+/**
  * Name: getpost
  * Description: Get a single post by ID
  * Return: error or post data
