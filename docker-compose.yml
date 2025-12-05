@@ -39,7 +39,7 @@ services:
       - nulltagram-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
