@@ -13,7 +13,7 @@ services:
       - nulltagram-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5001/openapi.json"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5001/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -23,26 +23,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+        - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
+        - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
+        - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
+        - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
+        - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
+        - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
     container_name: nulltagram-frontend
-    environment:
-      - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
-      - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
-      - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
-      - VITE_FIREBASE_STORAGE_BUCKET=${VITE_FIREBASE_STORAGE_BUCKET}
-      - VITE_FIREBASE_MESSAGING_SENDER_ID=${VITE_FIREBASE_MESSAGING_SENDER_ID}
-      - VITE_FIREBASE_APP_ID=${VITE_FIREBASE_APP_ID}
-      - VITE_API_URL=${VITE_API_URL:-http://backend:5001}
     depends_on:
       backend:
         condition: service_healthy
     networks:
       - nulltagram-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
 networks:
   nulltagram-network:
