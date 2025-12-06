@@ -9,8 +9,6 @@ services:
       - NODE_ENV=production
       - PORT=5001
       - FIREBASE_SERVICE_ACCOUNT=${FIREBASE_SERVICE_ACCOUNT}
-    networks:
-      - nulltagram-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:5001/health"]
@@ -35,10 +33,4 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    networks:
-      - nulltagram-network
     restart: unless-stopped
-
-networks:
-  nulltagram-network:
-    driver: bridge
