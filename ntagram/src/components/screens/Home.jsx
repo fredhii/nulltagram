@@ -9,7 +9,7 @@ import Modal from '../common/Modal'
 import Avatar from '../common/Avatar'
 import SkeletonImage from '../common/SkeletonImage'
 import M from 'materialize-css'
-import { MoreHorizontal, Loader2 } from 'lucide-react'
+import { MoreHorizontal, Loader2, Heart, MessageCircle } from 'lucide-react'
 /* Utils */
 import { timeAgo } from '../../utils/timeAgo'
 /* Style */
@@ -272,23 +272,18 @@ const Home = () => {
 						<div className='post-content'>
 							{/* Actions */}
 							<div className='post-actions'>
-								{item.likes.includes(state._id) ? (
-									<i
-										className={`material-icons liked ${loadingActions[`like-${item._id}`] ? 'loading' : ''}`}
-										onClick={() => removePostLike(item._id)}
-									>
-										favorite
-									</i>
-								) : (
-									<i
-										className={`material-icons ${loadingActions[`like-${item._id}`] ? 'loading' : ''}`}
-										onClick={() => PostLike(item._id)}
-									>
-										favorite_border
-									</i>
-								)}
-								<Link to={`/post/${item._id}`}>
-									<i className='material-icons'>chat_bubble_outline</i>
+								<button
+									className={`action-btn ${item.likes.includes(state._id) ? 'liked' : ''} ${loadingActions[`like-${item._id}`] ? 'loading' : ''}`}
+									onClick={() => item.likes.includes(state._id) ? removePostLike(item._id) : PostLike(item._id)}
+									disabled={loadingActions[`like-${item._id}`]}
+								>
+									<Heart
+										size={26}
+										fill={item.likes.includes(state._id) ? 'currentColor' : 'none'}
+									/>
+								</button>
+								<Link to={`/post/${item._id}`} className='action-btn'>
+									<MessageCircle size={26} />
 								</Link>
 							</div>
 

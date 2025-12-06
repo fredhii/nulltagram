@@ -1,0 +1,105 @@
+/* Dropdown Wrapper */
+.dropdown-wrapper {
+    position: relative;
+}
+
+/* Avatar Trigger */
+.avatar-dropdown-trigger {
+    display: flex !important;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px 4px 4px;
+    border-radius: 24px;
+    transition: background 0.2s;
+    color: var(--text-primary) !important;
+}
+
+.avatar-dropdown-trigger:hover {
+    background: var(--bg-hover);
+}
+
+.dropdown-chevron {
+    color: var(--text-secondary);
+    transition: transform 0.2s;
+}
+
+.avatar-dropdown-trigger[aria-expanded="true"] .dropdown-chevron {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    min-width: 230px !important;
+    padding: 8px 0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid var(--border-color) !important;
+    background: var(--bg-card) !important;
+    overflow: hidden;
+}
+
+/* Dropdown Header */
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px !important;
+}
+
+.dropdown-header-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.dropdown-header-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dropdown-header-email {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dropdown Items */
+.dropdown-item {
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    color: var(--text-primary) !important;
+    transition: background 0.15s;
+}
+
+.dropdown-item:hover {
+    background: var(--bg-hover) !important;
+}
+
+.dropdown-item svg {
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+/* Danger Item */
+.dropdown-item-danger {
+    color: var(--accent-danger) !important;
+}
+
+.dropdown-item-danger svg {
+    color: var(--accent-danger);
+}
+
+/* Divider */
+.dropdown-menu .divider {
+    margin: 8px 0 !important;
+    background-color: var(--border-light) !important;
+}
