@@ -135,17 +135,26 @@ const Signup = () => {
 
             // If no profile exists, create one
             if (data.error) {
+                const profileData = {
+                    name: result.user.displayName || result.user.email.split('@')[0],
+                    image: result.user.photoURL || undefined
+                }
+
                 res = await fetch(`${API_URL}/create-profile`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({
-                        name: result.user.displayName || result.user.email.split('@')[0],
-                        image: result.user.photoURL
-                    })
+                    body: JSON.stringify(profileData)
                 })
+
+                if (!res.ok) {
+                    const errorData = await res.json()
+                    setErrors({ general: errorData.error || `Failed to create profile (${res.status})` })
+                    return
+                }
+
                 data = await res.json()
                 if (data.error) {
                     setErrors({ general: data.error })
@@ -158,8 +167,16 @@ const Signup = () => {
             dispatch({ type: 'USER', payload: data.user })
             navigate('/')
         } catch (err) {
-            console.error(err)
-            setErrors({ general: 'Failed to sign up with Google' })
+            console.error('Google sign-up error:', err)
+            if (err.code === 'auth/popup-closed-by-user') {
+                setErrors({ general: 'Sign-up cancelled' })
+            } else if (err.code === 'auth/popup-blocked') {
+                setErrors({ general: 'Popup blocked. Please allow popups for this site.' })
+            } else if (err.code === 'auth/unauthorized-domain') {
+                setErrors({ general: 'This domain is not authorized. Add it in Firebase Console.' })
+            } else {
+                setErrors({ general: err.message || 'Failed to sign up with Google' })
+            }
         } finally {
             setLoading(false)
         }
